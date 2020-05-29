@@ -5,10 +5,11 @@ import (
 )
 
 const wantTemperatureCommandOutput = "temp=41.7'C"
-const fakeMeasureTemperatureCommand = "echo " + wantTemperatureCommandOutput
+const fakeMeasureTemperatureCommand = "echo"
 
 func TestRunningCPUTempertatureCommand(t *testing.T) {
-	commandOutput, err := runTemperatureCommand(fakeMeasureTemperatureCommand)
+	commandOutput, err := runTemperatureCommand(fakeMeasureTemperatureCommand,
+		wantTemperatureCommandOutput)
 
 	if err != nil {
 		t.Errorf("Error running command %s to test CPU temperature measurement. Error message: %s",

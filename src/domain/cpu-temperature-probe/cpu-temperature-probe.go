@@ -5,11 +5,12 @@ import (
 	"os/exec"
 )
 
-const measureTemperatureCommand = "/opt/vc/bin/vcgencmd measure_temp"
+const measureTemperatureCommand = "/opt/vc/bin/vcgencmd"
+const measureTemperatureArgs = "measure_temp"
 const printToOutput = 1
 
-func runTemperatureCommand(command string) (string, error) {
-	measureCPUTemperatureCommand := exec.Command(command)
+func runTemperatureCommand(command string, args string) (string, error) {
+	measureCPUTemperatureCommand := exec.Command(command, args)
 
 	commandOutput, err := measureCPUTemperatureCommand.CombinedOutput()
 
