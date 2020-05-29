@@ -1,6 +1,7 @@
 package teperatureprobe
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -16,7 +17,7 @@ func TestRunningCPUTempertatureCommand(t *testing.T) {
 			fakeMeasureTemperatureCommand, err.Error())
 	}
 
-	if commandOutput != "" && commandOutput != wantTemperatureCommandOutput {
+	if commandOutput != "" && !strings.Contains(commandOutput, wantTemperatureCommandOutput) {
 		t.Errorf("Invalid temperature measurement output: expected %s but recived %s",
 			wantTemperatureCommandOutput, commandOutput)
 	}

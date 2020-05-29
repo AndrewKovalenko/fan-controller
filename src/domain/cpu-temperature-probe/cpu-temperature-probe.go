@@ -3,6 +3,7 @@ package teperatureprobe
 import (
 	"log"
 	"os/exec"
+	"strings"
 )
 
 const measureTemperatureCommand = "/opt/vc/bin/vcgencmd"
@@ -18,7 +19,13 @@ func runTemperatureCommand(command string, args string) (string, error) {
 		log.Output(printToOutput, err.Error())
 	}
 
-	return string(commandOutput), err
+	result := string(commandOutput)
+
+	if strings.Contains(result, "/n") {
+		result = strings.TrimSuffix(result, "/n")
+	}
+
+	return result, err
 }
 
 func GetCPUTemperature() float32 {
