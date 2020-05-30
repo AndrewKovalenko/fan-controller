@@ -1,6 +1,7 @@
 package teperatureprobe
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os/exec"
@@ -12,25 +13,30 @@ const measureTemperatureCommand = "/opt/vc/bin/vcgencmd"
 const measureTemperatureArgs = "measure_temp"
 const printToOutput = 1
 const cpuTemperatureResponsecPattern = `.*=([\d\.]+)'C$`
-const one = 1
+const precission32 = 32
 
 var logMessage = log.Output
+
+func hasOnlyOneElement(collection []string) bool {
+	return len(collection) == 1
+}
 
 func parseTemperature(commandOutputString string) (float32, error) {
 	temperatureRegexp := regexp.MustCompile(cpuTemperatureResponsecPattern)
 	matchedStrings := temperatureRegexp.FindStringSubmatch(commandOutputString)
 
-	if len(matchedStrings) == one {
+	if hasOnlyOneElement(matchedStrings) {
 		temperatureValue := matchedStrings[0]
-		cpuTemperature, err := strconv.ParseFloat(temperatureValue)
+		cpuTemperature, err := strconv.ParseFloat(temperatureValue, precission32)
 
 		if err != nil {
 			logMessage(printToOutput, err.Error())
 		}
-		return cpuTemperature, err
+		return float32(cpuTemperature), err
 	}
 
-	return 0, error.New(fmt.Sprintf("Unable to parse CPU temperature form value %s", commandOutputString))
+	wrongCommandOutputMessage := fmt.Sprintf("Unable to parse CPU temperature form value %s", commandOutputString)
+	return 0, errors.New(wrongCommandOutputMessage)
 }
 
 func runTemperatureCommand(command string, args string) (string, error) {

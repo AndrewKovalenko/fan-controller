@@ -1,8 +1,8 @@
 package main
 
-import app "../application"
+import app "fan-controller/src/application"
 
-var controllerInitializer controllerInitializerFunction = app.InitializeFanController
+var controllerInitializer = app.InitializeFanController
 
 func main() {
 	controllerInitializer()
