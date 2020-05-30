@@ -12,22 +12,32 @@ import (
 const measureTemperatureCommand = "/opt/vc/bin/vcgencmd"
 const measureTemperatureArgs = "measure_temp"
 const printToOutput = 1
-const cpuTemperatureResponsecPattern = `.*=([\d\.]+)'C$`
+const temperatureCaptureGroupName = "temperature"
+const cpuTemperatureResponsecPattern = `.*=(?P<temperature>[\d\.]+)'C$`
 const precission32 = 32
 
 var logMessage = log.Output
 
-func hasOnlyOneElement(collection []string) bool {
-	return len(collection) == 1
+func findTemperatureString(expression *regexp.Regexp, matches []string) (string, bool) {
+	groupNmaes := expression.SubexpNames()
+
+	for i, matchString := range matches {
+		if groupNmaes[i] == temperatureCaptureGroupName {
+			return matchString, true
+		}
+	}
+
+	return "", false
 }
 
 func parseTemperature(commandOutputString string) (float32, error) {
 	temperatureRegexp := regexp.MustCompile(cpuTemperatureResponsecPattern)
 	matchedStrings := temperatureRegexp.FindStringSubmatch(commandOutputString)
 
-	if hasOnlyOneElement(matchedStrings) {
-		temperatureValue := matchedStrings[0]
-		cpuTemperature, err := strconv.ParseFloat(temperatureValue, precission32)
+	temperatureString, temperatureValueFound := findTemperatureString(temperatureRegexp, matchedStrings)
+
+	if temperatureValueFound {
+		cpuTemperature, err := strconv.ParseFloat(temperatureString, precission32)
 
 		if err != nil {
 			logMessage(printToOutput, err.Error())
@@ -51,6 +61,15 @@ func runTemperatureCommand(command string, args string) (string, error) {
 	return string(commandOutput), err
 }
 
-func GetCPUTemperature() float32 {
-	return 0
+func GetCPUTemperature() (float32, error) {
+	temperatureString, readCPUTemperatureError := runTemperatureCommand(measureTemperatureCommand,
+		measureTemperatureArgs)
+
+	if readCPUTemperatureError != nil {
+		return 0, readCPUTemperatureError
+	}
+
+	cpuTemperature, parsingTemperatureError := parseTemperature(temperatureString)
+
+	return cpuTemperature, parsingTemperatureError
 }

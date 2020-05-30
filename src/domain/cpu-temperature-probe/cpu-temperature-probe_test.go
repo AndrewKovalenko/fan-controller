@@ -1,12 +1,21 @@
 package teperatureprobe
 
 import (
+	"math"
 	"strings"
 	"testing"
 )
 
+const wantTemperatureCommandOutput = "temp=41.7'C"
+const wantTemperatureValue = 41.7
+
+const float64EqualityThreshold = 1e-9
+
+func almostEqual(a, b float32) bool {
+	return math.Abs(float64(a-b)) <= float64EqualityThreshold
+}
+
 func TestRunningCPUTempertatureCommand(t *testing.T) {
-	const wantTemperatureCommandOutput = "temp=41.7'C"
 	const fakeMeasureTemperatureCommand = "echo"
 
 	commandOutput, err := runTemperatureCommand(fakeMeasureTemperatureCommand,
@@ -41,4 +50,16 @@ func TestRunningCPUTemperatureCommandLogsMessageIfError(t *testing.T) {
 	}
 
 	logMessage = originalLogger
+}
+
+func TestParseTemperature(t *testing.T) {
+	temperatureValue, err := parseTemperature(wantTemperatureCommandOutput)
+
+	if err != nil {
+		t.Errorf("Error parsing valid temperature value %s. Error message: %s", wantTemperatureCommandOutput, err)
+	}
+
+	if err == nil && !almostEqual(temperatureValue, wantTemperatureValue) {
+		t.Errorf("Expected temperature value to be %f but recived %f", wantTemperatureValue, temperatureValue)
+	}
 }
