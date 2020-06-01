@@ -18,7 +18,8 @@ func ReadFanControllerConfig(filename string) FanControllerConfig {
 	parsingConfigError := yaml.Unmarshal(configContent, &fanControllerConfig)
 
 	if parsingConfigError != nil {
-		log.Fatalf("Unable to parse yaml config: %s", configContent)
+		log.Fatalf("Unable to parse yaml config: %s \n Error: %s",
+			string(configContent), parsingConfigError)
 	}
 
 	return fanControllerConfig

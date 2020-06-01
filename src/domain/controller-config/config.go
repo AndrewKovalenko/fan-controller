@@ -1,7 +1,7 @@
 package controllerconfig
 
 type FanControllerConfig struct {
-	TemperatureUpdateFrequency uint16          `yaml: "temperatureCheckFrequency"`
-	TurnOffTemperatureMargin   uint8           `yaml: "fanTurnOffTemperatureMargin"`
-	FanSpeedSettings           map[uint8]uint8 `yaml: "fanSpeedSettings"`
+	TemperatureUpdateFrequency int         `yaml:"temperatureCheckFrequency"`
+	TurnOffTemperatureMargin   int         `yaml:"fanTurnOffTemperatureMargin"`
+	FanSpeedSettings           map[int]int `yaml:"fanSpeedSettings"`
 }
