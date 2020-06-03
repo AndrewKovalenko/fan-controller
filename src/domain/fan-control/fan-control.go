@@ -25,7 +25,6 @@ func Init() {
 		log.Fatal("Unable to initialize GPIO pin 18")
 	}
 
-	raspiCoolingFan.controlPin = gpio.Pin(pmwFanControlPin)
 	raspiCoolingFan.controlPin.Mode(gpio.Pwm)
 	raspiCoolingFan.controlPin.Freq(pmwClockFrequency)
 	raspiCoolingFan.controlPin.DutyCycle(fanOff, cycleLength)
