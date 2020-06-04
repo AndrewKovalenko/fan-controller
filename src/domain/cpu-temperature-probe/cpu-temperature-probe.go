@@ -3,7 +3,6 @@ package teperatureprobe
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -15,8 +14,6 @@ const printToOutput = 1
 const temperatureCaptureGroupName = "temperature"
 const cpuTemperatureResponsecPattern = `.*=(?P<temperature>[\d\.]+)'C$`
 const precission32 = 32
-
-var logMessage = log.Output
 
 func findTemperatureString(expression *regexp.Regexp, matches []string) (string, bool) {
 	groupNmaes := expression.SubexpNames()
@@ -40,8 +37,9 @@ func parseTemperature(commandOutputString string) (float32, error) {
 		cpuTemperature, err := strconv.ParseFloat(temperatureString, precission32)
 
 		if err != nil {
-			logMessage(printToOutput, err.Error())
+			return 0, err
 		}
+
 		return float32(cpuTemperature), err
 	}
 
@@ -51,11 +49,10 @@ func parseTemperature(commandOutputString string) (float32, error) {
 
 func runTemperatureCommand(command string, args string) (string, error) {
 	measureCPUTemperatureCommand := exec.Command(command, args)
-
 	commandOutput, err := measureCPUTemperatureCommand.CombinedOutput()
 
 	if err != nil {
-		logMessage(printToOutput, err.Error())
+		return "", err
 	}
 
 	return string(commandOutput), err

@@ -33,23 +33,11 @@ func TestRunningCPUTempertatureCommand(t *testing.T) {
 }
 
 func TestRunningCPUTemperatureCommandLogsMessageIfError(t *testing.T) {
-	messageLoged := false
-	originalLogger := logMessage
+	_, err := runTemperatureCommand("Hello", "there")
 
-	mockLogger := func(int, string) error {
-		messageLoged = true
-		return nil
-	}
-
-	logMessage = mockLogger
-
-	runTemperatureCommand("Hello", "there")
-
-	if !messageLoged {
+	if err == nil {
 		t.Error("CPU temperature measurement function doesn't log error message when command fails")
 	}
-
-	logMessage = originalLogger
 }
 
 func TestParseTemperature(t *testing.T) {

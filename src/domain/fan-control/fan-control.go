@@ -1,7 +1,7 @@
 package fanControl
 
 import (
-	"log"
+	"errors"
 
 	gpio "github.com/stianeikeland/go-rpio/v4"
 )
@@ -18,11 +18,11 @@ type fan struct {
 
 var raspiCoolingFan = fan{controlPin: gpio.Pin(pmwFanControlPin)}
 
-func Init() {
+func Init() error {
 	err := gpio.Open()
 
 	if err != nil {
-		log.Fatal("Unable to initialize GPIO pin 18")
+		return err
 	}
 
 	raspiCoolingFan.controlPin.Mode(gpio.Pwm)
@@ -30,16 +30,16 @@ func Init() {
 	raspiCoolingFan.controlPin.DutyCycle(fanOff, cycleLength)
 
 	gpio.StartPwm()
+	return nil
 }
 
-func SetFanSpeed(percentage uint32) {
+func SetFanSpeed(percentage uint32) error {
 	if percentage < 0 || percentage > 100 {
-		log.Println("Wrong percentage value")
-		return
+		return errors.New("Fan speed can't be greater than 100 and less than 0")
 	}
 
 	raspiCoolingFan.controlPin.DutyCycle(percentage, cycleLength)
-
+	return nil
 }
 
 func CleanUp() {
