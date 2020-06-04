@@ -1,12 +1,15 @@
 package main
 
-import "testing"
+import (
+	"fan-controller/src/application"
+	"testing"
+)
 
 var mockInitializerCalled = false
 
 type applicationMock struct{}
 
-func (app *applicationMock) InitializeFanController(string) error {
+func (app *applicationMock) InitializeFanController(string, application.Logger) error {
 	mockInitializerCalled = true
 
 	return nil

@@ -7,5 +7,6 @@ var controllerInitializer = app.InitializeFanController
 const configFileName = "./fan-controller-config.yaml"
 
 func main() {
-	controllerInitializer(configFileName)
+	logger := Logger{}
+	controllerInitializer(configFileName, logger)
 }

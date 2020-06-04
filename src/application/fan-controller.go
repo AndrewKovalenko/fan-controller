@@ -8,7 +8,7 @@ import (
 	fanControl "fan-controller/src/domain/fan-control"
 )
 
-func InitializeFanController(controllerConfigFilePath string) error {
+func InitializeFanController(controllerConfigFilePath string, logger LoggerInterface) error {
 	defer func() {
 		fanControl.CleanUp()
 	}()
