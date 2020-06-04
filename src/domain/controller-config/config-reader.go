@@ -1,26 +1,31 @@
 package controllerconfig
 
 import (
+	"errors"
+	"fmt"
 	"io/ioutil"
-	"log"
 
 	yaml "gopkg.in/yaml.v3"
 )
 
-func ReadFanControllerConfig(filename string) FanControllerConfig {
+const fileNotFoundMessage = "Unable to find config file %s"
+const configParsingErrorMessage = "Unable to parse yaml config: %s \n Error: %s"
+
+func ReadFanControllerConfig(filename string) (FanControllerConfig, error) {
 	configContent, err := ioutil.ReadFile(filename)
 
 	if err != nil {
-		log.Fatalf("Unable to find config file %s", filename)
+		errorMessge := fmt.Sprintf(fileNotFoundMessage, filename)
+		return FanControllerConfig{}, errors.New(errorMessge)
 	}
 
 	fanControllerConfig := FanControllerConfig{}
 	parsingConfigError := yaml.Unmarshal(configContent, &fanControllerConfig)
 
 	if parsingConfigError != nil {
-		log.Fatalf("Unable to parse yaml config: %s \n Error: %s",
-			string(configContent), parsingConfigError)
+		parsingErrorMessage := fmt.Sprintf(configParsingErrorMessage, string(filename), parsingConfigError)
+		return FanControllerConfig{}, errors.New(parsingErrorMessage)
 	}
 
-	return fanControllerConfig
+	return fanControllerConfig, nil
 }
