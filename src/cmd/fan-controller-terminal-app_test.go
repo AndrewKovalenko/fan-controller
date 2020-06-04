@@ -6,8 +6,10 @@ var mockInitializerCalled = false
 
 type applicationMock struct{}
 
-func (app *applicationMock) InitializeFanController() {
+func (app *applicationMock) InitializeFanController(string) error {
 	mockInitializerCalled = true
+
+	return nil
 }
 
 func TestMain(t *testing.T) {
