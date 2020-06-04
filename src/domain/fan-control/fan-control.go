@@ -33,12 +33,12 @@ func Init() error {
 	return nil
 }
 
-func SetFanSpeed(percentage uint32) error {
+func SetFanSpeed(percentage uint8) error {
 	if percentage < 0 || percentage > 100 {
 		return errors.New("Fan speed can't be greater than 100 and less than 0")
 	}
 
-	raspiCoolingFan.controlPin.DutyCycle(percentage, cycleLength)
+	raspiCoolingFan.controlPin.DutyCycle(uint32(percentage), cycleLength)
 	return nil
 }
 
