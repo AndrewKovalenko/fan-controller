@@ -57,3 +57,20 @@ func TestReadInvalidYaml(t *testing.T) {
 		t.Errorf("Expect error message to start with %s but got %s", expectedErrorMessage, actualErrorMessage)
 	}
 }
+
+func TestFillingInTemeratureScale(t *testing.T) {
+	fanControllerConfig, _ := ReadFanControllerConfig(testConfigFilePath)
+
+	temperaturesConfigured := getAllConfiguredTemperatureValues(fanControllerConfig)
+
+	if temperaturesConfigured == nil {
+		t.Error("Temperature scale shouldn't be nil")
+	}
+
+	want := []uint8{40, 50, 60}
+	for i, element := range want {
+		if temperaturesConfigured[i] != element {
+			t.Error("Temperatures available should be sorted")
+		}
+	}
+}
