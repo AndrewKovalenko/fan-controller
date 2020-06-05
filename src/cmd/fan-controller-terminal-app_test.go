@@ -9,7 +9,7 @@ var mockInitializerCalled = false
 
 type applicationMock struct{}
 
-func (app *applicationMock) InitializeFanController(string, application.Logger) error {
+func (app *applicationMock) InitializeFanController(string, application.LoggerInterface) error {
 	mockInitializerCalled = true
 
 	return nil

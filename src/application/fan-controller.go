@@ -1,6 +1,7 @@
 package application
 
 import (
+	"fmt"
 	"time"
 
 	controllerConfig "fan-controller/src/domain/controller-config"
@@ -11,6 +12,7 @@ import (
 func InitializeFanController(controllerConfigFilePath string, logger LoggerInterface) error {
 	defer func() {
 		fanControl.CleanUp()
+		logger.Log("Fan control CleanUp complete")
 	}()
 
 	fanControllerConfig, configReadingError :=
@@ -36,6 +38,8 @@ func InitializeFanController(controllerConfigFilePath string, logger LoggerInter
 		}
 
 		fanSpeed := fanControllerConfig.GetFanSpeedSettingForTemperature(cpuTemperature)
+		logMessage := fmt.Sprintf("CPU temperature: %f Fan Speed: %d", cpuTemperature, fanSpeed)
+		logger.Log(logMessage)
 		fanControl.SetFanSpeed(fanSpeed)
 
 		time.Sleep(teperatureCheckingFrequency)
