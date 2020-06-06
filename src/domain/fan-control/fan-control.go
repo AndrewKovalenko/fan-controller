@@ -8,28 +8,23 @@ import (
 
 const pmwFanControlPin = 18
 const cycleLength = 100
-const desiredPmwFrequency = 50 // 50Hz
+const desiredPmwFrequency = 50 // 5kHz
 const pmwClockFrequency = desiredPmwFrequency * cycleLength
 const fanOff = 0
 
-type fan struct {
-	controlPin gpio.Pin
-}
-
-var raspiCoolingFan = fan{controlPin: gpio.Pin(pmwFanControlPin)}
+var fanControllingPin = gpio.Pin(pmwFanControlPin)
 
 func Init() error {
-	err := gpio.Open()
-
-	if err != nil {
+	if err := gpio.Open(); err != nil {
 		return err
 	}
 
-	raspiCoolingFan.controlPin.Mode(gpio.Pwm)
-	raspiCoolingFan.controlPin.Freq(pmwClockFrequency)
-	raspiCoolingFan.controlPin.DutyCycle(fanOff, cycleLength)
+	fanControllingPin.Pwm()
 
+	fanControllingPin.Freq(pmwClockFrequency)
+	fanControllingPin.DutyCycle(fanOff, cycleLength)
 	gpio.StartPwm()
+
 	return nil
 }
 
@@ -38,7 +33,7 @@ func SetFanSpeed(percentage uint8) error {
 		return errors.New("Fan speed can't be greater than 100 and less than 0")
 	}
 
-	raspiCoolingFan.controlPin.DutyCycle(uint32(percentage), cycleLength)
+	fanControllingPin.DutyCycle(uint32(percentage), cycleLength)
 	return nil
 }
 
