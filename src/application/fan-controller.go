@@ -19,14 +19,20 @@ func InitializeFanController(controllerConfigFilePath string, logger LoggerInter
 		controllerConfig.ReadFanControllerConfig(controllerConfigFilePath)
 
 	if configReadingError != nil {
+		logMessage := fmt.Sprintf("config reading error %s", configReadingError.Error())
+		logger.Log(logMessage)
 		return configReadingError
 	}
+
+	logger.Log("config read sucessfully")
 
 	teperatureCheckingFrequency := time.Duration(fanControllerConfig.TemperatureUpdateFrequency) *
 		time.Second
 	fanControlInitError := fanControl.Init()
 
 	if fanControlInitError != nil {
+		logMessage := fmt.Sprintf("Fan control init error %s", fanControlInitError.Error())
+		logger.Log(logMessage)
 		return fanControlInitError
 	}
 
@@ -34,7 +40,8 @@ func InitializeFanController(controllerConfigFilePath string, logger LoggerInter
 		cpuTemperature, temperatureReadingError := cpuTemperatureProbe.GetCPUTemperature()
 
 		if temperatureReadingError != nil {
-			// log an error message
+			logMessage := fmt.Sprintf("temperature reading error %s", temperatureReadingError.Error())
+			logger.Log(logMessage)
 		}
 
 		fanSpeed := fanControllerConfig.GetFanSpeedSettingForTemperature(cpuTemperature)

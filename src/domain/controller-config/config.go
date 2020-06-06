@@ -38,6 +38,7 @@ func (f FanControllerConfig) GetFanSpeedSettingForTemperature(cpuTemperature flo
 	}
 
 	for index, temperatureSetting := range f.temperatureValuesAvailable {
+
 		if roundedCPUTemperature > temperatureSetting {
 			continue
 		}
@@ -50,7 +51,9 @@ func (f FanControllerConfig) GetFanSpeedSettingForTemperature(cpuTemperature flo
 
 		if roundedCPUTemperature < stepDownTemperature {
 			lowerSpeedSettingIndex := uint8(index) - 1
-			return f.FanSpeedSettings[lowerSpeedSettingIndex]
+			lowerSpeedSettingKey := f.temperatureValuesAvailable[lowerSpeedSettingIndex]
+
+			return f.FanSpeedSettings[lowerSpeedSettingKey]
 		}
 
 		return f.FanSpeedSettings[temperatureSetting]

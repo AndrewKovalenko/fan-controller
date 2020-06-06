@@ -1,4 +1,4 @@
-package main
+package debugLogger
 
 import "log"
 

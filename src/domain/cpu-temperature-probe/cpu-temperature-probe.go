@@ -12,7 +12,7 @@ const measureTemperatureCommand = "/opt/vc/bin/vcgencmd"
 const measureTemperatureArgs = "measure_temp"
 const printToOutput = 1
 const temperatureCaptureGroupName = "temperature"
-const cpuTemperatureResponsecPattern = `.*=(?P<temperature>[\d\.]+)'C$`
+const cpuTemperatureResponsecPattern = `(?s).*=(?P<temperature>[\d\.]+)'C.*$`
 const precission32 = 32
 
 func findTemperatureString(expression *regexp.Regexp, matches []string) (string, bool) {
