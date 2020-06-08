@@ -9,7 +9,8 @@ import (
 	fanControl "fan-controller/src/domain/fan-control"
 )
 
-func RunFanController(controllerConfigFilePath string, logger LoggerInterface) error {
+func RunFanController(controllerConfigFilePath string,
+	logger LoggerInterface, shutdownChanel chan (struct{})) error {
 	defer func() {
 		fanControl.CleanUp()
 		logger.Log("Fan control CleanUp complete")
@@ -37,6 +38,12 @@ func RunFanController(controllerConfigFilePath string, logger LoggerInterface) e
 	}
 
 	for {
+		select {
+		case <-shutdownChanel:
+			return nil
+		default:
+		}
+
 		cpuTemperature, temperatureReadingError := cpuTemperatureProbe.GetCPUTemperature()
 
 		if temperatureReadingError != nil {
