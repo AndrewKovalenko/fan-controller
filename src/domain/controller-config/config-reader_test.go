@@ -6,9 +6,9 @@ import (
 	"testing"
 )
 
-const testConfigFilePath = "./test-data/fan-controller-config.yaml"
-const wrongFilePath = "./test-data/not-exsist.yaml"
-const notYamlFilePath = "./test-data/text-file.txt"
+const testConfigFilePath = "test-data/fan-controller-config.yaml"
+const wrongFilePath = "test-data/not-exsist.yaml"
+const notYamlFilePath = "test-data/text-file.txt"
 
 func TestReadYamlConfig(t *testing.T) {
 	fanControllerConfig, err := ReadFanControllerConfig(testConfigFilePath)

@@ -11,7 +11,7 @@ import (
 var wg = &sync.WaitGroup{}
 var runFanController = app.RunFanController
 
-const configFileName = "./fan-controller-config.yaml"
+const configFileName = "fan-controller-config.yaml"
 
 func main() {
 	cancelChannel := make(chan os.Signal, 1)
