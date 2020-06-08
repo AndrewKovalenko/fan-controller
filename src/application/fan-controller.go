@@ -10,7 +10,7 @@ import (
 )
 
 func RunFanController(controllerConfigFilePath string,
-	logger LoggerInterface, shutdownChanel chan (struct{})) error {
+	logger LoggerInterface, shutdownChannel chan (struct{})) error {
 	defer func() {
 		fanControl.CleanUp()
 		logger.Log("Fan control CleanUp complete")
@@ -20,7 +20,7 @@ func RunFanController(controllerConfigFilePath string,
 		controllerConfig.ReadFanControllerConfig(controllerConfigFilePath)
 
 	if configReadingError != nil {
-		logMessage := fmt.Sprintf("config reading error %s", configReadingError.Error())
+		logMessage := fmt.Sprintf("Config reading error %s", configReadingError.Error())
 		logger.Log(logMessage)
 		return configReadingError
 	}
@@ -39,21 +39,21 @@ func RunFanController(controllerConfigFilePath string,
 
 	for {
 		select {
-		case <-shutdownChanel:
+		case <-shutdownChannel:
 			return nil
+
 		default:
+			cpuTemperature, temperatureReadingError := cpuTemperatureProbe.GetCPUTemperature()
+
+			if temperatureReadingError != nil {
+				logMessage := fmt.Sprintf("Temperature reading error %s", temperatureReadingError.Error())
+				logger.Log(logMessage)
+			}
+
+			fanSpeed := fanControllerConfig.GetFanSpeedSettingForTemperature(cpuTemperature)
+			fanControl.SetFanSpeed(fanSpeed)
+
+			time.Sleep(teperatureCheckingFrequency)
 		}
-
-		cpuTemperature, temperatureReadingError := cpuTemperatureProbe.GetCPUTemperature()
-
-		if temperatureReadingError != nil {
-			logMessage := fmt.Sprintf("Temperature reading error %s", temperatureReadingError.Error())
-			logger.Log(logMessage)
-		}
-
-		fanSpeed := fanControllerConfig.GetFanSpeedSettingForTemperature(cpuTemperature)
-		fanControl.SetFanSpeed(fanSpeed)
-
-		time.Sleep(teperatureCheckingFrequency)
 	}
 }
