@@ -16,9 +16,9 @@ func (app *applicationMock) InitializeFanController(string, application.LoggerIn
 }
 
 func TestMain(t *testing.T) {
-	originalInitializer := controllerInitializer
+	originalInitializer := runFanController
 	appMock := new(applicationMock)
-	controllerInitializer = appMock.InitializeFanController
+	runFanController = appMock.InitializeFanController
 
 	main()
 
@@ -26,5 +26,5 @@ func TestMain(t *testing.T) {
 		t.Error("Terminal application doesn't call controller initialzer")
 	}
 
-	controllerInitializer = originalInitializer
+	runFanController = originalInitializer
 }

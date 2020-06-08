@@ -9,7 +9,7 @@ import (
 	fanControl "fan-controller/src/domain/fan-control"
 )
 
-func InitializeFanController(controllerConfigFilePath string, logger LoggerInterface) error {
+func RunFanController(controllerConfigFilePath string, logger LoggerInterface) error {
 	defer func() {
 		fanControl.CleanUp()
 		logger.Log("Fan control CleanUp complete")
@@ -24,7 +24,7 @@ func InitializeFanController(controllerConfigFilePath string, logger LoggerInter
 		return configReadingError
 	}
 
-	logger.Log("config read sucessfully")
+	logger.Log("Config read sucessfully")
 
 	teperatureCheckingFrequency := time.Duration(fanControllerConfig.TemperatureUpdateFrequency) *
 		time.Second
@@ -40,13 +40,11 @@ func InitializeFanController(controllerConfigFilePath string, logger LoggerInter
 		cpuTemperature, temperatureReadingError := cpuTemperatureProbe.GetCPUTemperature()
 
 		if temperatureReadingError != nil {
-			logMessage := fmt.Sprintf("temperature reading error %s", temperatureReadingError.Error())
+			logMessage := fmt.Sprintf("Temperature reading error %s", temperatureReadingError.Error())
 			logger.Log(logMessage)
 		}
 
 		fanSpeed := fanControllerConfig.GetFanSpeedSettingForTemperature(cpuTemperature)
-		logMessage := fmt.Sprintf("CPU temperature: %f Fan Speed: %d", cpuTemperature, fanSpeed)
-		logger.Log(logMessage)
 		fanControl.SetFanSpeed(fanSpeed)
 
 		time.Sleep(teperatureCheckingFrequency)

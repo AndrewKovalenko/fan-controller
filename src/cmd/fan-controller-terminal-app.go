@@ -5,11 +5,11 @@ import (
 	logger "fan-controller/src/domain/debugLogger"
 )
 
-var controllerInitializer = app.InitializeFanController
+var runFanController = app.RunFanController
 
 const configFileName = "./fan-controller-config.yaml"
 
 func main() {
 	logger := logger.Logger{}
-	controllerInitializer(configFileName, logger)
+	runFanController(configFileName, logger)
 }
