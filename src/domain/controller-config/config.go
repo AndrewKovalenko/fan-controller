@@ -24,7 +24,7 @@ func getAllConfiguredTemperatureValues(fanConfig FanControllerConfig) []uint8 {
 	}
 	sort.Slice(result,
 		func(i, j int) bool {
-			return result[i] < result[j]
+			return result[i] > result[j]
 		})
 
 	return result
@@ -37,27 +37,13 @@ func (f FanControllerConfig) GetFanSpeedSettingForTemperature(cpuTemperature flo
 		f.temperatureValuesAvailable = getAllConfiguredTemperatureValues(f)
 	}
 
-	for index, temperatureSetting := range f.temperatureValuesAvailable {
-
-		if roundedCPUTemperature > temperatureSetting {
-			continue
-		}
-
+	for _, temperatureSetting := range f.temperatureValuesAvailable {
 		stepDownTemperature := temperatureSetting - f.TurnOffTemperatureMargin
 
-		if roundedCPUTemperature < stepDownTemperature && index == 0 {
-			return turnOffFan
+		if roundedCPUTemperature >= stepDownTemperature {
+			return f.FanSpeedSettings[temperatureSetting]
 		}
-
-		if roundedCPUTemperature < stepDownTemperature {
-			lowerSpeedSettingIndex := uint8(index) - 1
-			lowerSpeedSettingKey := f.temperatureValuesAvailable[lowerSpeedSettingIndex]
-
-			return f.FanSpeedSettings[lowerSpeedSettingKey]
-		}
-
-		return f.FanSpeedSettings[temperatureSetting]
 	}
 
-	return maxSpeed
+	return turnOffFan
 }
