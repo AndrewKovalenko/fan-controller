@@ -30,7 +30,8 @@ func getAllConfiguredTemperatureValues(fanConfig FanControllerConfig) []uint8 {
 	return result
 }
 
-func (f FanControllerConfig) GetFanSpeedSettingForTemperature(cpuTemperature float32) uint8 {
+func (f FanControllerConfig) GetFanSpeedSettingForTemperature(cpuTemperature float32,
+	currentFanSpeed uint8) uint8 {
 	roundedCPUTemperature := uint8(cpuTemperature)
 
 	if f.temperatureValuesAvailable == nil {
@@ -38,9 +39,14 @@ func (f FanControllerConfig) GetFanSpeedSettingForTemperature(cpuTemperature flo
 	}
 
 	for _, temperatureSetting := range f.temperatureValuesAvailable {
+		if roundedCPUTemperature >= temperatureSetting {
+			return f.FanSpeedSettings[temperatureSetting]
+		}
+
 		stepDownTemperature := temperatureSetting - f.TurnOffTemperatureMargin
 
-		if roundedCPUTemperature >= stepDownTemperature {
+		if roundedCPUTemperature >= stepDownTemperature &&
+			currentFanSpeed == f.FanSpeedSettings[temperatureSetting] {
 			return f.FanSpeedSettings[temperatureSetting]
 		}
 	}

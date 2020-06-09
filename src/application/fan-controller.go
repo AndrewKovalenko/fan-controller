@@ -37,6 +37,8 @@ func RunFanController(controllerConfigFilePath string,
 		return fanControlInitError
 	}
 
+	var fanSpeed uint8 = 0
+
 	for {
 		select {
 		case <-shutdownChannel:
@@ -50,7 +52,7 @@ func RunFanController(controllerConfigFilePath string,
 				logger.Log(logMessage)
 			}
 
-			fanSpeed := fanControllerConfig.GetFanSpeedSettingForTemperature(cpuTemperature)
+			fanSpeed = fanControllerConfig.GetFanSpeedSettingForTemperature(cpuTemperature, fanSpeed)
 			fanControl.SetFanSpeed(fanSpeed)
 
 			time.Sleep(teperatureCheckingFrequency)
