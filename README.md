@@ -35,13 +35,15 @@ There are 3 files in a *fan-controller* distribution package:
 ## Config
 ```
 temperatureCheckFrequency: 20
-fanTurnOffTemperatureMargin: 5
+stepdownTemperature: 3
 fanSpeedSettings:
-  40: 0
   50: 50
-  60: 100
+  54: 70
+  58: 100
 ```
 
 Config has 3 parameters:
 `temperatureCheckFrequency` - a number of seconds the app will "wait" before checking the temperature again
-``
+`stepdownTemperature` - a number of degrees **below** current temperature setting the fan will keep running with current speed setting. 
+For example: once CPU temperature reaches 50 deg - the fan will start running at 50% of it's speed. If if stepdown temperature is set to 3 deg - the fun will keep running at 50% until CPU cools down to 47 deg.
+`fanSpeedSettings` - a key-value collection of <CPU temperature>:<fan speed>. CPU temperature is measured in Celsius. Fan Speed is measured in percents. 
