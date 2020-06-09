@@ -14,10 +14,12 @@ const halfSpeed = 50
 const twoThirdSpeed = 70
 
 func TestReadYamlConfig(t *testing.T) {
+	originalEvecutableDirectory := executableDirectory
+	executableDirectory = ""
 	fanControllerConfig, err := ReadFanControllerConfig(testConfigFilePath)
 
 	if err != nil {
-		t.Error("Config should be read successfully")
+		t.Errorf("Config should be read successfully. Error: %s", err.Error())
 	}
 
 	if len(fanControllerConfig.FanSpeedSettings) != 3 {
@@ -31,9 +33,12 @@ func TestReadYamlConfig(t *testing.T) {
 	if fanControllerConfig.TurnOffTemperatureMargin != 5 {
 		t.Error("Controller turn-off temerature margin is not parsed properly")
 	}
+	executableDirectory = originalEvecutableDirectory
 }
 
 func TestReadNotExistingConfig(t *testing.T) {
+	originalEvecutableDirectory := executableDirectory
+	executableDirectory = ""
 	_, err := ReadFanControllerConfig(wrongFilePath)
 
 	if err == nil {
@@ -45,9 +50,12 @@ func TestReadNotExistingConfig(t *testing.T) {
 	if actualErrorMessage != expectedErrorMessage {
 		t.Errorf("Expected error message to be %s but got %s", expectedErrorMessage, actualErrorMessage)
 	}
+	executableDirectory = originalEvecutableDirectory
 }
 
 func TestReadInvalidYaml(t *testing.T) {
+	originalEvecutableDirectory := executableDirectory
+	executableDirectory = ""
 	_, err := ReadFanControllerConfig(notYamlFilePath)
 
 	if err == nil {
@@ -59,9 +67,12 @@ func TestReadInvalidYaml(t *testing.T) {
 	if !strings.HasPrefix(actualErrorMessage, expectedErrorMessage) {
 		t.Errorf("Expect error message to start with %s but got %s", expectedErrorMessage, actualErrorMessage)
 	}
+	executableDirectory = originalEvecutableDirectory
 }
 
 func TestFillingInTemeratureScale(t *testing.T) {
+	originalEvecutableDirectory := executableDirectory
+	executableDirectory = ""
 	fanControllerConfig, _ := ReadFanControllerConfig(testConfigFilePath)
 
 	temperaturesConfigured := getAllConfiguredTemperatureValues(fanControllerConfig)
@@ -70,12 +81,13 @@ func TestFillingInTemeratureScale(t *testing.T) {
 		t.Error("Temperature scale shouldn't be nil")
 	}
 
-	want := []uint8{40, 50, 60}
+	want := []uint8{60, 50, 40}
 	for i, element := range want {
 		if temperaturesConfigured[i] != element {
 			t.Error("Temperatures available should be sorted")
 		}
 	}
+	executableDirectory = originalEvecutableDirectory
 }
 
 func TestCalculatingFanSpeed(t *testing.T) {

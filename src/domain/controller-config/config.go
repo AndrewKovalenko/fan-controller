@@ -10,7 +10,7 @@ const turnOffFan = 0
 
 type FanControllerConfig struct {
 	TemperatureUpdateFrequency uint16 `yaml:"temperatureCheckFrequency"`
-	TurnOffTemperatureMargin   uint8  `yaml:"fanTurnOffTemperatureMargin"`
+	TurnOffTemperatureMargin   uint8  `yaml:"stepdownTemperature"`
 
 	FanSpeedSettings           map[uint8]uint8 `yaml:"fanSpeedSettings"`
 	temperatureValuesAvailable []uint8

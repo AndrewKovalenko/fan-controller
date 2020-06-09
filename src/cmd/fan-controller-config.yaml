@@ -1,6 +1,6 @@
 temperatureCheckFrequency: 20
-fanTurnOffTemperatureMargin: 5
+stepdownTemperature: 3
 fanSpeedSettings:
-  40: 0
   50: 50
-  60: 100
+  54: 70
+  58: 100

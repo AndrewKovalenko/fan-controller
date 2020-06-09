@@ -14,8 +14,10 @@ import (
 const fileNotFoundMessage = "Unable to find config file %s"
 const configParsingErrorMessage = "Unable to parse yaml config: %s \n Error: %s"
 
+var executableDirectory, directoryReadingError = filepath.Abs(filepath.Dir(os.Args[0]))
+
 func ReadFanControllerConfig(filename string) (FanControllerConfig, error) {
-	executableDirectory, directoryReadingError := filepath.Abs(filepath.Dir(os.Args[0]))
+	// executableDirectory, directoryReadingError := filepath.Abs(filepath.Dir(os.Args[0]))
 	if directoryReadingError != nil {
 		return FanControllerConfig{}, directoryReadingError
 	}
