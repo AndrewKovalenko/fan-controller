@@ -10,6 +10,9 @@ const testConfigFilePath = "test-data/fan-controller-config.yaml"
 const wrongFilePath = "test-data/not-exsist.yaml"
 const notYamlFilePath = "test-data/text-file.txt"
 
+const halfSpeed = 50
+const twoThirdSpeed = 70
+
 func TestReadYamlConfig(t *testing.T) {
 	fanControllerConfig, err := ReadFanControllerConfig(testConfigFilePath)
 
@@ -72,5 +75,41 @@ func TestFillingInTemeratureScale(t *testing.T) {
 		if temperaturesConfigured[i] != element {
 			t.Error("Temperatures available should be sorted")
 		}
+	}
+}
+
+func TestCalculatingFanSpeed(t *testing.T) {
+
+	fanControllerConfig := FanControllerConfig{
+		TemperatureUpdateFrequency: 5,
+		TurnOffTemperatureMargin:   3,
+		FanSpeedSettings: map[uint8]uint8{
+			50: halfSpeed,
+			54: twoThirdSpeed,
+			58: maxSpeed},
+	}
+
+	fanSupposedToBeTurnedOff := fanControllerConfig.GetFanSpeedSettingForTemperature(49, 0)
+
+	if fanSupposedToBeTurnedOff != turnOffFan {
+		t.Error("Fan speed is not zero for temperature lower than lowest setting while wraming up")
+	}
+
+	fanSupposedToRunHalfSpeed := fanControllerConfig.GetFanSpeedSettingForTemperature(50, 0)
+
+	if fanSupposedToRunHalfSpeed != halfSpeed {
+		t.Error("Fan speed is not calsulated properly")
+	}
+
+	fanStillSupposedToRunHalfSpeed := fanControllerConfig.GetFanSpeedSettingForTemperature(49, halfSpeed)
+
+	if fanStillSupposedToRunHalfSpeed != halfSpeed {
+		t.Error("Fan supposed to maintain speed until cools down to stepDown temperature")
+	}
+
+	fanSupposedToRunTwoThirdSpeed := fanControllerConfig.GetFanSpeedSettingForTemperature(54, halfSpeed)
+
+	if fanSupposedToRunTwoThirdSpeed != twoThirdSpeed {
+		t.Error("Fan supposed to run two third of its speed")
 	}
 }
